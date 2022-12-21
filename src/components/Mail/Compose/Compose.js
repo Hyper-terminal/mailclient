@@ -22,6 +22,7 @@ const Compose = () => {
       to: emailRef.current.value,
       subject: subjectRef.current.value,
       body: body,
+      markRead: false
     };
 
     const formattedEmail = loggedInEmail.replace("@", "").replace(".", "");

@@ -6,6 +6,7 @@ import Login from "./components/Auth/Login";
 import Signup from "./components/Auth/Signup";
 import Compose from "./components/Mail/Compose/Compose";
 import Inbox from "./components/Mail/Inbox/Inbox";
+import Mail from "./components/Mail/Mail";
 import Navbar from "./components/Navbar/Navbar";
 
 const App = () => {
@@ -41,6 +42,7 @@ const App = () => {
                 </>
               }
             />
+            <Route path="inbox/:mailId" element={<Mail />} />
           </Route>
         )}
 

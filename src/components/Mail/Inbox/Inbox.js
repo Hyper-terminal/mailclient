@@ -1,36 +1,52 @@
-import { Box, Flex, Heading, SimpleGrid } from "@chakra-ui/react";
+import {
+  Box,
+  Divider,
+  Flex,
+  Heading,
+  SimpleGrid,
+  Text,
+} from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { mailActions } from "../../../store/mail-slice";
 import { getInboxMail } from "../mailApi";
-
 const Inbox = () => {
-  const [mails, setMails] = useState(null);
+  const [unreadCount, setUnreadCount] = useState(0);
 
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const inboxMail = useSelector((state) => state.mail.inboxMail);
   const loggedInEmail = useSelector((state) => state.auth.loggedInEmail);
+
   const formattedEmail = loggedInEmail.replace("@", "").replace(".", "");
+
+  const clickHandler = (id) => {
+    navigate(`/mail/inbox/${id}`);
+  };
 
   useEffect(() => {
     const sendRequest = async () => {
       const { response, data } = await getInboxMail(formattedEmail);
       if (response.ok) {
         if (data) {
-          let mailArr = [];
+          const mailObjects = {};
+          let count = 0;
 
           for (let key in data) {
             const mailObj = data[key];
             mailObj.id = key;
-            mailArr.push(mailObj);
+            if (mailObj.markRead === false) count++;
+            mailObjects[key] = mailObj;
           }
-
-          setMails((prev) => {
-            return [...mailArr];
-          });
-        } else console.log("no data found");
+          setUnreadCount(count);
+          dispatch(mailActions.replaceEmails(mailObjects));
+        }
       }
     };
 
     sendRequest();
-  }, []);
+  }, [formattedEmail, dispatch]);
 
   return (
     <Flex
@@ -50,26 +66,70 @@ const Inbox = () => {
         rounded="md"
         bg="snow"
       >
-        {!mails && <Heading textAlign="center">Your inbox is empty</Heading>}
+        <Text fontWeight="bold" color="pink.400">
+          Unread Mails: {unreadCount}
+        </Text>
+        {!inboxMail && (
+          <Heading textAlign="center">Your inbox is empty</Heading>
+        )}
 
-        {mails &&
-          mails.map((mail) => (
-            <SimpleGrid
-              shadow="md"
-              borderRadius="lg"
-              p="2"
-              border="1px"
-              key={mail.id}
-              mt="2"
-              columns={2}
-              spacing={2}
-            >
-              <Box>{mail.from}</Box>
-              <Box overflow="hidden" textOverflow="ellipsis">
-                {mail.body}
-              </Box>
-            </SimpleGrid>
-          ))}
+        {inboxMail &&
+          Object.keys(inboxMail).map((mail) => {
+            return (
+              <SimpleGrid
+                onClick={clickHandler.bind(null, mail)}
+                borderRadius="lg"
+                p="2"
+                key={mail}
+                mt="2"
+                columns={2}
+                spacing={2}
+                cursor="pointer"
+                _hover={{
+                  backgroundColor: "blackAlpha.400",
+                }}
+              >
+                <Flex
+                  alignItems="center"
+                  overflow="hidden"
+                  textOverflow="ellipsis"
+                >
+                  <Divider
+                    w="1"
+                    mr="2.5"
+                    bgColor="pink.400"
+                    orientation="vertical"
+                    display="inline-block"
+                  />
+                  <Box
+                    w="2"
+                    h="2"
+                    ml="1"
+                    borderRadius="full"
+                    display="inline-block"
+                    bgColor="blue"
+                    mr="2.5"
+                  ></Box>
+                  {inboxMail[mail].from.slice(0, 40)}
+                </Flex>
+                <Flex
+                  lineHeight="1"
+                  alignItems="center"
+                  overflow="hidden"
+                  textOverflow="ellipsis"
+                >
+                  <Divider
+                    w="1"
+                    mr="2.5"
+                    bgColor="pink.400"
+                    orientation="vertical"
+                    display="inline-block"
+                  />
+                  {inboxMail[mail].body.slice(0, 40)}...
+                </Flex>
+              </SimpleGrid>
+            );
+          })}
       </Box>
     </Flex>
   );
