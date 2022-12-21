@@ -1,14 +1,14 @@
 import {
-    Alert,
-    AlertIcon,
-    Box,
-    Button,
-    Flex,
-    FormControl,
-    FormLabel,
-    Heading,
-    Input,
-    Link
+  Alert,
+  AlertIcon,
+  Box,
+  Button,
+  Flex,
+  FormControl,
+  FormLabel,
+  Heading,
+  Input,
+  Link
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
@@ -26,11 +26,15 @@ const ForgetPassword = () => {
     setEmail((prev) => event.target.value);
   };
 
-  const submitHandler = async () => {
+  const submitHandler = async (event) => {
+    event.preventDefault();
     setIsLoading(true);
     const { response, data } = await forgetRequest(email);
     setIsLoading(false);
-    if (!response.ok) setIsError(data.error.message);
+    if (!response.ok) {
+      setIsError(data.error.message);
+      return;
+    }
     setIsError("success");
   };
 
@@ -67,7 +71,7 @@ const ForgetPassword = () => {
               borderRadius="3xl"
               isRequired
             >
-              {isError && (
+              {isError && isError !== "success" && (
                 <Alert status="error">
                   <AlertIcon /> {isError}
                 </Alert>

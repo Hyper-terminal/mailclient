@@ -48,14 +48,20 @@ const Login = () => {
       setIsError("All fields are required");
       return;
     }
-    const { response, data } = await loginRequest(formData);
 
-    if (!response.ok) {
-      setIsLoading(false);
-      setIsError(data.error.message);
-    } else {
-      dispatch(authActions.login(data.idToken));
-      navigate("/", { replace: true });
+    // login request
+    try {
+      const { response, data } = await loginRequest(formData);
+
+      if (!response.ok) {
+        setIsLoading(false);
+        throw new Error(data.error.message);
+      } else {
+        dispatch(authActions.login(data));
+        navigate("/", { replace: true });
+      }
+    } catch (err) {
+      setIsError(err);
     }
   };
 

@@ -37,7 +37,7 @@ export const loginRequest = async (user) => {
 };
 
 export const forgetRequest = async (email) => {
-  const url = `https://identitytoolkit.googleapis.com/v1/accounts:update?key=${process.env.REACT_APP_FIREBASE_API}`;
+  const url = `https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${process.env.REACT_APP_FIREBASE_API}`;
   const response = await fetch(url, {
     method: "post",
     headers: {

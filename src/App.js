@@ -1,10 +1,10 @@
 import React from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
-import Login from "./components/Auth/Login";
-import Navbar from "./components/Navbar/Navbar";
-import Signup from "./components/Auth/Signup";
 import { useSelector } from "react-redux";
+import { Navigate, Route, Routes } from "react-router-dom";
 import ForgetPassword from "./components/Auth/ForgetPassword";
+import Login from "./components/Auth/Login";
+import Signup from "./components/Auth/Signup";
+import Layout from "./components/Layout";
 
 const App = () => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
@@ -19,9 +19,11 @@ const App = () => {
           <Route path="/" element={<Navigate to="/auth/signin" />} />
         )}
 
-        <Route path="/">
-          <Route path="home" element={<Navbar />} />
-        </Route>
+        {isAuthenticated && (
+          <Route path="/">
+            <Route path="home" element={<Layout />} />
+          </Route>
+        )}
 
         {!isAuthenticated && (
           <Route path="/auth">

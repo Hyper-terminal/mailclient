@@ -65,7 +65,7 @@ const Signup = () => {
       setIsLoading(false);
       setIsError(data.error.message);
     } else {
-      dispatch(authActions.login(data.idToken));
+      dispatch(authActions.login(data));
       navigate("/", { replace: true });
     }
   };
