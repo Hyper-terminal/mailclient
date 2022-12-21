@@ -136,7 +136,7 @@ const Login = () => {
 
               <Link
                 as={NavLink}
-                to="/auth/signup"
+                to="/auth/forget"
                 color="#4f85e2"
                 mt="4"
                 display="block"
