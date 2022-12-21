@@ -4,7 +4,9 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import ForgetPassword from "./components/Auth/ForgetPassword";
 import Login from "./components/Auth/Login";
 import Signup from "./components/Auth/Signup";
-import Layout from "./components/Layout";
+import Compose from "./components/Mail/Compose/Compose";
+import Inbox from "./components/Mail/Inbox/Inbox";
+import Navbar from "./components/Navbar/Navbar";
 
 const App = () => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
@@ -12,7 +14,7 @@ const App = () => {
     <>
       <Routes>
         {isAuthenticated && (
-          <Route path="/" element={<Navigate to="/home" />} />
+          <Route path="/" element={<Navigate to="/mail/inbox" />} />
         )}
 
         {!isAuthenticated && (
@@ -20,8 +22,25 @@ const App = () => {
         )}
 
         {isAuthenticated && (
-          <Route path="/">
-            <Route path="home" element={<Layout />} />
+          <Route path="/mail">
+            <Route
+              path="compose"
+              element={
+                <>
+                  <Navbar />
+                  <Compose />
+                </>
+              }
+            />
+            <Route
+              path="inbox"
+              element={
+                <>
+                  <Navbar />
+                  <Inbox />
+                </>
+              }
+            />
           </Route>
         )}
 

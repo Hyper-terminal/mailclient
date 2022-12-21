@@ -29,3 +29,15 @@ export const inboxMail = async (mailObj, formattedEmail) => {
 
   return { response, data };
 };
+
+export const getInboxMail = async (formattedEmail) => {
+  const url =
+    "https://mailbox-64e91-default-rtdb.asia-southeast1.firebasedatabase.app/" +
+    formattedEmail +
+    "/inboxMail.json";
+
+  const response = await fetch(url);
+  const data = await response.json();
+
+  return { data, response };
+};

@@ -3,7 +3,7 @@ import React, { useRef } from "react";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { useSelector } from "react-redux";
-import { composeMail, inboxMail } from "./mailApi";
+import { composeMail, inboxMail } from "../mailApi";
 
 const Compose = () => {
   const emailRef = useRef();
@@ -29,14 +29,13 @@ const Compose = () => {
       .replace("@", "")
       .replace(".", "");
 
-    const { response, data } = await composeMail(mailObj, formattedEmail);
+    const { response } = await composeMail(mailObj, formattedEmail);
 
     if (response.ok) {
-      const { response, data } = await inboxMail(mailObj, formattedToEmail);
+      const { response } = await inboxMail(mailObj, formattedToEmail);
 
       if (response.ok) alert("Email sent successfully");
     }
-
   };
 
   const onEditorStateChange = (event) => {
@@ -57,7 +56,7 @@ const Compose = () => {
       alignItems="center"
       bgColor="#33206c"
       h="100vh"
-      w="100vw"
+      ml="200px"
       maxW="100vw"
       boxShadow="lg"
     >

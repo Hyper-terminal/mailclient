@@ -1,13 +1,15 @@
-import { ChatIcon, UnlockIcon } from "@chakra-ui/icons";
+import { UnlockIcon } from "@chakra-ui/icons";
 import { Avatar, Box, Divider, Flex, Link, Text } from "@chakra-ui/react";
 import React from "react";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { NavLink, useNavigate } from "react-router-dom";
 import { authActions } from "../../store/auth-slice";
 
 const Navbar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const loggedInEmail = useSelector((state) => state.auth.loggedInEmail);
 
   const logoutHandler = () => {
     dispatch(authActions.logout());
@@ -16,32 +18,29 @@ const Navbar = () => {
 
   return (
     <Flex
-      overflow="hidden"
       alignItems="center"
       flexDirection="column"
       p={5}
       height="100%"
       position="fixed"
-      width="14rem"
-      zIndex={100}
+      width="200px"
       bgColor="#E9EEF1"
+      overflow="auto"
     >
       <Box textAlign="center">
         <Avatar size="xl" />
-        <Text fontWeight="700" mt={5}>
-          SHERLOCK
+        <Text wordBreak="break-word" color="blackAlpha.700">
+          {loggedInEmail}
         </Text>
-        <Text color="blackAlpha.700">sherlock@gmail.com</Text>
       </Box>
 
       <Flex direction="column">
-        <Link mt={10}>
-          <ChatIcon />
+        <Link as={NavLink} to="/mail/compose" mt={10}>
+          Compose
+        </Link>
+        <Link as={NavLink} to="/mail/inbox" mt={10}>
           Inbox
         </Link>
-        <Link mt={10}>Sent</Link>
-        <Link mt={10}>Draft</Link>
-        <Link mt={10}>About</Link>
 
         <Divider mt={10} bgColor="black" height={0.3} />
 
