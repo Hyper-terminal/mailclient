@@ -1,29 +1,27 @@
 import { Box, Flex, Heading, Text } from "@chakra-ui/react";
-
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { mailActions } from "../../../store/mail-slice";
-import { deleteMail, getInboxMail, updateMarkRead } from "../mailApi";
+import { deleteSentMail, getSentMail, updateSentMarkRead } from "../mailApi";
 import MailListItem from "../MailItems/MailListItem";
 
-const Inbox = () => {
+const Sent = () => {
   const [unreadCount, setUnreadCount] = useState(0);
   const navigate = useNavigate();
 
+  const sentMail = useSelector((state) => state.mail.sentMail);
   const dispatch = useDispatch();
-  const inboxMail = useSelector((state) => state.mail.inboxMail);
   const loggedInEmail = useSelector((state) => state.auth.loggedInEmail);
   const formattedEmail = loggedInEmail.replace("@", "").replace(".", "");
 
   useEffect(() => {
     const sendRequest = async () => {
-      const { response, data } = await getInboxMail(formattedEmail);
+      const { response, data } = await getSentMail(formattedEmail);
       if (response.ok) {
         if (data) {
           const mailObjects = {};
           let count = 0;
-
           for (let key in data) {
             const mailObj = data[key];
             mailObj.id = key;
@@ -31,7 +29,7 @@ const Inbox = () => {
             mailObjects[key] = mailObj;
           }
           setUnreadCount(count);
-          dispatch(mailActions.replaceEmails(mailObjects));
+          dispatch(mailActions.replaceSentMails(mailObjects));
         }
       }
     };
@@ -40,17 +38,16 @@ const Inbox = () => {
   }, [formattedEmail, dispatch]);
 
   const deleteHandler = (formattedEmail, id) => {
-    deleteMail(formattedEmail, id);
-    dispatch(mailActions.deleteMail(id));
+    deleteSentMail(formattedEmail, id);
+    dispatch(mailActions.deleteSentMail(id));
   };
 
   const clickHandler = (mail) => {
-    console.log(mail)
     const mailObj = { ...mail };
     mailObj.markRead = true;
-    updateMarkRead(formattedEmail, mail.id, mailObj);
-    dispatch(mailActions.markInboxMailRead(mail.id));
-    navigate(`/mail/inbox/${mail.id}`);
+    updateSentMarkRead(formattedEmail, mail.id, mailObj);
+    dispatch(mailActions.markSentMailRead(mail.id));
+    navigate(`/mail/sent/${mail.id}`);
   };
 
   return (
@@ -71,21 +68,19 @@ const Inbox = () => {
         rounded="md"
         bg="snow"
       >
-        <Heading fontFamily="lobster">INBOX</Heading>
+        <Heading fontFamily="lobster">SENT EMAIL BOX</Heading>
         <Text fontWeight="bold" color="pink.400">
           Unread Mails: {unreadCount}
         </Text>
-        {!inboxMail && (
-          <Heading textAlign="center">Your inbox is empty</Heading>
-        )}
+        {!sentMail && <Heading textAlign="center">Your inbox is empty</Heading>}
 
-        {inboxMail &&
-          Object.keys(inboxMail).map((mail) => (
+        {sentMail &&
+          Object.keys(sentMail).map((mail) => (
             <MailListItem
-              onClick={clickHandler}
               onDelete={deleteHandler}
+              onClick={clickHandler}
               key={mail}
-              mail={inboxMail[mail]}
+              mail={sentMail[mail]}
             />
           ))}
       </Box>
@@ -93,4 +88,4 @@ const Inbox = () => {
   );
 };
 
-export default Inbox;
+export default Sent;

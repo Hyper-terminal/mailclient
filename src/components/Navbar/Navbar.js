@@ -41,6 +41,9 @@ const Navbar = () => {
         <Link as={NavLink} to="/mail/inbox" mt={10}>
           Inbox
         </Link>
+        <Link as={NavLink} to="/mail/sent" mt={10}>
+          Sent
+        </Link>
 
         <Divider mt={10} bgColor="black" height={0.3} />
 

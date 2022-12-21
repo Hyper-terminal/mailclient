@@ -1,16 +1,15 @@
 import { Box, Heading, Text } from "@chakra-ui/react";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { mailActions } from "../../store/mail-slice";
 
-const Mail = () => {
+const SentMail = () => {
   const { mailId } = useParams();
-  const inboxMail = useSelector((state) => state.mail.inboxMail);
-  const foundMail = inboxMail[mailId];
+  const sentMail = useSelector((state) => state.mail.sentMail);
+  const foundMail = sentMail[mailId];
 
   return (
-    <Box>
+    <Box textAlign="center" mt="14">
       <Heading>{foundMail.from}</Heading>
       <Text color="green">{foundMail.subject}</Text>
       <Text color="blue">{foundMail.body}</Text>
@@ -18,4 +17,4 @@ const Mail = () => {
   );
 };
 
-export default Mail;
+export default SentMail;

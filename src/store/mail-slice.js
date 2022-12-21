@@ -1,22 +1,28 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { act } from "react-dom/test-utils";
 
 const mailSlice = createSlice({
   name: "mail",
-  initialState: { inboxMail: {} },
+  initialState: { inboxMail: {}, sentMail: {} },
   reducers: {
     replaceEmails(state, action) {
       state.inboxMail = action.payload;
     },
 
-    markRead(state, action) {
-      const id = action.payload;
-      state.inboxMail[action.payload].markRead = true;
+    replaceSentMails(state, action) {
+      state.sentMail = action.payload;
     },
 
+    markInboxMailRead(state, action) {
+      state.inboxMail[action.payload].markRead = true;
+    },
+    markSentMailRead(state, action) {
+      state.sentMail[action.payload].markRead = true;
+    },
     deleteMail(state, action) {
-      const id = action.payload;
-      delete state.inboxMail[id];
+      delete state.inboxMail[action.payload];
+    },
+    deleteSentMail(state, action) {
+      delete state.sentMail[action.payload];
     },
   },
 });

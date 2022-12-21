@@ -4,10 +4,11 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import ForgetPassword from "./components/Auth/ForgetPassword";
 import Login from "./components/Auth/Login";
 import Signup from "./components/Auth/Signup";
-import Compose from "./components/Mail/Compose/Compose";
-import Inbox from "./components/Mail/Inbox/Inbox";
-import Mail from "./components/Mail/Mail";
-import Navbar from "./components/Navbar/Navbar";
+import InboxMail from "./components/Mail/MailItems/InboxMail";
+import SentMail from "./components/Mail/MailItems/SentMail";
+import ComposePage from "./pages/ComposePage";
+import InboxPage from "./pages/InboxPage";
+import SentPage from "./pages/SentPage";
 
 const App = () => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
@@ -24,25 +25,11 @@ const App = () => {
 
         {isAuthenticated && (
           <Route path="/mail">
-            <Route
-              path="compose"
-              element={
-                <>
-                  <Navbar />
-                  <Compose />
-                </>
-              }
-            />
-            <Route
-              path="inbox"
-              element={
-                <>
-                  <Navbar />
-                  <Inbox />
-                </>
-              }
-            />
-            <Route path="inbox/:mailId" element={<Mail />} />
+            <Route path="sent" element={<SentPage />} />
+            <Route path="compose" element={<ComposePage />} />
+            <Route path="inbox" element={<InboxPage />} />
+            <Route path="inbox/:mailId" element={<InboxMail />} />
+            <Route path="sent/:mailId" element={<SentMail />} />
           </Route>
         )}
 
