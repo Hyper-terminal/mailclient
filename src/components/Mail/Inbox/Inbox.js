@@ -2,15 +2,18 @@ import {
   Box,
   Divider,
   Flex,
+  Button,
   Heading,
   SimpleGrid,
   Text,
 } from "@chakra-ui/react";
+
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { mailActions } from "../../../store/mail-slice";
-import { getInboxMail } from "../mailApi";
+import { deleteMail, getInboxMail, updateMarkRead } from "../mailApi";
+
 const Inbox = () => {
   const [unreadCount, setUnreadCount] = useState(0);
 
@@ -22,7 +25,16 @@ const Inbox = () => {
   const formattedEmail = loggedInEmail.replace("@", "").replace(".", "");
 
   const clickHandler = (id) => {
+    const mailObj = { ...inboxMail[id] };
+    mailObj.markRead = true;
+    updateMarkRead(formattedEmail, id, mailObj);
+    dispatch(mailActions.markRead(id));
     navigate(`/mail/inbox/${id}`);
+  };
+
+  const deleteHandler = (id) => {
+    deleteMail(formattedEmail, id);
+    dispatch(mailActions.deleteMail(id));
   };
 
   useEffect(() => {
@@ -94,13 +106,12 @@ const Inbox = () => {
                   overflow="hidden"
                   textOverflow="ellipsis"
                 >
-                  <Divider
-                    w="1"
-                    mr="2.5"
-                    bgColor="pink.400"
-                    orientation="vertical"
-                    display="inline-block"
-                  />
+                  <Button
+                    onClick={deleteHandler.bind(null, mail)}
+                    colorScheme="red"
+                  >
+                    Delete
+                  </Button>
                   <Box
                     w="2"
                     h="2"

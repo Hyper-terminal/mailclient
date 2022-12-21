@@ -6,12 +6,9 @@ import { mailActions } from "../../store/mail-slice";
 
 const Mail = () => {
   const { mailId } = useParams();
-  const dispatch = useDispatch();
-
   const inboxMail = useSelector((state) => state.mail.inboxMail);
-
   const foundMail = inboxMail[mailId];
-  dispatch(mailActions.markRead(mailId));
+
   return (
     <Box>
       <Heading>{foundMail.from}</Heading>
