@@ -1,6 +1,6 @@
 import { Box, Flex, Heading, Text } from "@chakra-ui/react";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { mailActions } from "../../../store/mail-slice";
@@ -16,28 +16,30 @@ const Inbox = () => {
   const loggedInEmail = useSelector((state) => state.auth.loggedInEmail);
   const formattedEmail = loggedInEmail.replace("@", "").replace(".", "");
 
-  useEffect(() => {
-    const sendRequest = async () => {
-      const { response, data } = await getInboxMail(formattedEmail);
-      if (response.ok) {
-        if (data) {
-          const mailObjects = {};
-          let count = 0;
+  const getEmails = useCallback(async () => {
+    const { response, data } = await getInboxMail(formattedEmail);
+    if (response.ok) {
+      if (data) {
+        const mailObjects = {};
+        let count = 0;
 
-          for (let key in data) {
-            const mailObj = data[key];
-            mailObj.id = key;
-            if (mailObj.markRead === false) count++;
-            mailObjects[key] = mailObj;
-          }
-          setUnreadCount(count);
-          dispatch(mailActions.replaceEmails(mailObjects));
+        for (let key in data) {
+          const mailObj = data[key];
+          mailObj.id = key;
+          if (mailObj.markRead === false) count++;
+          mailObjects[key] = mailObj;
         }
+        setUnreadCount(count);
+        dispatch(mailActions.replaceEmails(mailObjects));
       }
-    };
-
-    sendRequest();
+    }
   }, [formattedEmail, dispatch]);
+
+  useEffect(() => {
+    setInterval(() => {
+      getEmails();
+    }, 2000);
+  }, [getEmails]);
 
   const deleteHandler = (formattedEmail, id) => {
     deleteMail(formattedEmail, id);
@@ -45,7 +47,7 @@ const Inbox = () => {
   };
 
   const clickHandler = (mail) => {
-    console.log(mail)
+    console.log(mail);
     const mailObj = { ...mail };
     mailObj.markRead = true;
     updateMarkRead(formattedEmail, mail.id, mailObj);

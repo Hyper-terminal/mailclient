@@ -1,5 +1,5 @@
 import { Box, Flex, Heading, Text } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { mailActions } from "../../../store/mail-slice";
@@ -15,27 +15,29 @@ const Sent = () => {
   const loggedInEmail = useSelector((state) => state.auth.loggedInEmail);
   const formattedEmail = loggedInEmail.replace("@", "").replace(".", "");
 
-  useEffect(() => {
-    const sendRequest = async () => {
-      const { response, data } = await getSentMail(formattedEmail);
-      if (response.ok) {
-        if (data) {
-          const mailObjects = {};
-          let count = 0;
-          for (let key in data) {
-            const mailObj = data[key];
-            mailObj.id = key;
-            if (mailObj.markRead === false) count++;
-            mailObjects[key] = mailObj;
-          }
-          setUnreadCount(count);
-          dispatch(mailActions.replaceSentMails(mailObjects));
+  const getSentsEmails = useCallback(async () => {
+    const { response, data } = await getSentMail(formattedEmail);
+    if (response.ok) {
+      if (data) {
+        const mailObjects = {};
+        let count = 0;
+        for (let key in data) {
+          const mailObj = data[key];
+          mailObj.id = key;
+          if (mailObj.markRead === false) count++;
+          mailObjects[key] = mailObj;
         }
+        setUnreadCount(count);
+        dispatch(mailActions.replaceSentMails(mailObjects));
       }
-    };
-
-    sendRequest();
+    }
   }, [formattedEmail, dispatch]);
+
+  useEffect(() => {
+    setInterval(() => {
+      getSentsEmails();
+    }, 5000);
+  }, [getSentsEmails]);
 
   const deleteHandler = (formattedEmail, id) => {
     deleteSentMail(formattedEmail, id);
