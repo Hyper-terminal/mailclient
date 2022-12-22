@@ -1,14 +1,14 @@
 import { Box, Flex, Heading, Text } from "@chakra-ui/react";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import useFetchMail from "../../../hooks/use-fetchMails";
 import { mailActions } from "../../../store/mail-slice";
-import { deleteMail, getInboxMail, updateMarkRead } from "../mailApi";
+import { deleteMail, updateMarkRead } from "../mailApi";
 import MailListItem from "../MailItems/MailListItem";
 
 const Inbox = () => {
-  const [unreadCount, setUnreadCount] = useState(0);
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
@@ -16,30 +16,19 @@ const Inbox = () => {
   const loggedInEmail = useSelector((state) => state.auth.loggedInEmail);
   const formattedEmail = loggedInEmail.replace("@", "").replace(".", "");
 
-  const getEmails = useCallback(async () => {
-    const { response, data } = await getInboxMail(formattedEmail);
-    if (response.ok) {
-      if (data) {
-        const mailObjects = {};
-        let count = 0;
-
-        for (let key in data) {
-          const mailObj = data[key];
-          mailObj.id = key;
-          if (mailObj.markRead === false) count++;
-          mailObjects[key] = mailObj;
-        }
-        setUnreadCount(count);
-        dispatch(mailActions.replaceEmails(mailObjects));
-      }
-    }
-  }, [formattedEmail, dispatch]);
+  const { unreadCount, sendRequest: fetchInboxMails } = useFetchMail();
 
   useEffect(() => {
-    setInterval(() => {
-      getEmails();
+    const requestConfig = {
+      url: `https://mailbox-64e91-default-rtdb.asia-southeast1.firebasedatabase.app/${formattedEmail}/inboxMail.json`,
+    };
+
+    const interval = setInterval(() => {
+      fetchInboxMails(requestConfig, true);
     }, 2000);
-  }, [getEmails]);
+
+    return () => clearInterval(interval);
+  }, [fetchInboxMails, formattedEmail]);
 
   const deleteHandler = (formattedEmail, id) => {
     deleteMail(formattedEmail, id);

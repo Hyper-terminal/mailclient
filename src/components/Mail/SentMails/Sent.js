@@ -1,13 +1,13 @@
 import { Box, Flex, Heading, Text } from "@chakra-ui/react";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import useFetchMail from "../../../hooks/use-fetchMails";
 import { mailActions } from "../../../store/mail-slice";
-import { deleteSentMail, getSentMail, updateSentMarkRead } from "../mailApi";
+import { deleteSentMail, updateSentMarkRead } from "../mailApi";
 import MailListItem from "../MailItems/MailListItem";
 
 const Sent = () => {
-  const [unreadCount, setUnreadCount] = useState(0);
   const navigate = useNavigate();
 
   const sentMail = useSelector((state) => state.mail.sentMail);
@@ -15,29 +15,19 @@ const Sent = () => {
   const loggedInEmail = useSelector((state) => state.auth.loggedInEmail);
   const formattedEmail = loggedInEmail.replace("@", "").replace(".", "");
 
-  const getSentsEmails = useCallback(async () => {
-    const { response, data } = await getSentMail(formattedEmail);
-    if (response.ok) {
-      if (data) {
-        const mailObjects = {};
-        let count = 0;
-        for (let key in data) {
-          const mailObj = data[key];
-          mailObj.id = key;
-          if (mailObj.markRead === false) count++;
-          mailObjects[key] = mailObj;
-        }
-        setUnreadCount(count);
-        dispatch(mailActions.replaceSentMails(mailObjects));
-      }
-    }
-  }, [formattedEmail, dispatch]);
+  const { unreadCount, sendRequest: fetchSentMails } = useFetchMail();
 
   useEffect(() => {
-    setInterval(() => {
-      getSentsEmails();
-    }, 5000);
-  }, [getSentsEmails]);
+    const requestConfig = {
+      url: `https://mailbox-64e91-default-rtdb.asia-southeast1.firebasedatabase.app/${formattedEmail}/sentMail.json`,
+    };
+
+    const interval = setInterval(() => {
+      fetchSentMails(requestConfig, false);
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [fetchSentMails, formattedEmail]);
 
   const deleteHandler = (formattedEmail, id) => {
     deleteSentMail(formattedEmail, id);
