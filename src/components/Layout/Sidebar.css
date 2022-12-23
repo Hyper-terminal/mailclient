@@ -1,0 +1,19 @@
+.sidebar__avatar {
+  color: rgba(255, 255, 255, 0.65);
+  margin-top: 3rem;
+}
+.sidebar__avatar p {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar__logout {
+  color: rgba(255, 255, 255, 0.65);
+  margin-top: 3rem;
+  cursor: pointer;
+  transition: color 0.7s;
+}
+
+.sidebar__logout:hover {
+  color: white;
+}
