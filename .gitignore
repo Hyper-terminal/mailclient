@@ -3,7 +3,9 @@
 **/*.tar.gz
 **/*.tgz
 **/*.log
-
+.env
+.firebase.json
+.firebaserc
 package-lock.json
 **/*.bun
 
