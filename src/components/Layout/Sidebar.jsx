@@ -12,6 +12,7 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { authActions } from "../../store/auth-slice";
+import { mailActions } from "../../store/mail-slice";
 import "./Sidebar.css";
 
 const { Sider } = Layout;
@@ -26,6 +27,10 @@ const Sidebar = (props) => {
   const logoutHandler = () => {
     dispatch(authActions.logout());
     navigate("/", { replace: true });
+  };
+
+  const composeClickHandler = () => {
+    dispatch(mailActions.toggleModel(true));
   };
 
   return (
@@ -43,10 +48,7 @@ const Sidebar = (props) => {
         {/* compose button */}
         {isAuthenticated && (
           <Button
-            onClick={() => {
-              props.onTitleChange("compose");
-              navigate("/mail/compose");
-            }}
+            onClick={composeClickHandler}
             size="large"
             style={{ marginTop: "3rem" }}
           >

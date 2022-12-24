@@ -1,16 +1,25 @@
 import "antd/dist/reset.css";
+import React, { Suspense } from "react";
 import { useSelector } from "react-redux";
 import { Navigate, Route, Routes } from "react-router-dom";
-import ForgetPassword from "./components/auth/ForgetPassword";
-import Signin from "./components/auth/Signin";
-import Signup from "./components/auth/Signup";
 import Structure from "./components/Layout/Structure";
+import Spinner from "./components/Loader/Spinner";
+import Details from "./components/mail/Details/MailDetails";
+import NotFound from "./components/NotFound";
+
+const Inbox = React.lazy(() => import("./components/mail/Inbox/Inbox"));
+const Sent = React.lazy(() => import("./components/mail/Sent/Sent"));
+const Signin = React.lazy(() => import("./components/auth/Signin"));
+const Signup = React.lazy(() => import("./components/auth/Signup"));
+const ForgetPassword = React.lazy(() =>
+  import("./components/auth/ForgetPassword")
+);
 
 function App() {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
   return (
-    <>
+    <Suspense fallback={<Spinner />}>
       <Structure>
         <Routes>
           {!isAuthenticated && (
@@ -29,10 +38,19 @@ function App() {
             </Route>
           )}
 
-          <Route path="*" element={<h1>Not found</h1>} />
+          {isAuthenticated && (
+            <Route path="/mail">
+              <Route path="inbox" element={<Inbox />} />
+              <Route path="sent" element={<Sent />} />
+              <Route path="inbox/:mailId" element={<Details />} />
+              <Route path="sent/:mailId" element={<Details />} />
+            </Route>
+          )}
+
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Structure>
-    </>
+    </Suspense>
   );
 }
 

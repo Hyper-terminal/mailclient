@@ -1,10 +1,11 @@
-import TopBar from "./TopBar";
 import Layout from "antd/es/layout/layout";
-import Sidebar from "./Sidebar";
 import { useState } from "react";
+import Compose from "../mail/Compose/Compose";
+import Sidebar from "./Sidebar";
+import TopBar from "./TopBar";
 
 const Structure = (props) => {
-  const [title, setTitle] = useState("Inbox");
+  const [title, setTitle] = useState("");
 
   const titleHandler = (title) => {
     setTitle(title);
@@ -15,6 +16,9 @@ const Structure = (props) => {
       <Sidebar onTitleChange={titleHandler} />
       <Layout>
         <TopBar title={title} />
+
+        <Compose />
+
         {props.children}
       </Layout>
     </Layout>
