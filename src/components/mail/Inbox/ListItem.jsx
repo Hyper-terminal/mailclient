@@ -36,9 +36,13 @@ const ListItem = (props) => {
           overflow: "hidden",
         }}
         avatar={
-          <Badge dot="show" size="large" color="blue " offset={[10, 10]}>
+          props.item.markRead ? (
             <Avatar />
-          </Badge>
+          ) : (
+            <Badge dot="show" size="large" color="blue " offset={[10, 10]}>
+              <Avatar />
+            </Badge>
+          )
         }
         title={
           <a onClick={() => clickHandler(props.item)}>{props.item.from}</a>

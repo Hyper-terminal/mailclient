@@ -4,9 +4,12 @@ import { useSelector } from "react-redux";
 import { Navigate, Route, Routes } from "react-router-dom";
 import Structure from "./components/Layout/Structure";
 import Spinner from "./components/Loader/Spinner";
-import Details from "./components/mail/Details/MailDetails";
 import NotFound from "./components/NotFound";
 
+const InboxMail = React.lazy(() =>
+  import("./components/mail/Details/InboxMail")
+);
+const SentMail = React.lazy(() => import("./components/mail/Details/SentMail"));
 const Inbox = React.lazy(() => import("./components/mail/Inbox/Inbox"));
 const Sent = React.lazy(() => import("./components/mail/Sent/Sent"));
 const Signin = React.lazy(() => import("./components/auth/Signin"));
@@ -42,8 +45,8 @@ function App() {
             <Route path="/mail">
               <Route path="inbox" element={<Inbox />} />
               <Route path="sent" element={<Sent />} />
-              <Route path="inbox/:mailId" element={<Details />} />
-              <Route path="sent/:mailId" element={<Details />} />
+              <Route path="inbox/:mailId" element={<InboxMail />} />
+              <Route path="sent/:mailId" element={<SentMail />} />
             </Route>
           )}
 
