@@ -2,8 +2,12 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const mailSlice = createSlice({
   name: "mail",
-  initialState: { inboxMail: {}, sentMail: {} },
+  initialState: { inboxMail: {}, sentMail: {}, modalOpen: false },
   reducers: {
+    toggleModel(state, action) {
+      state.modalOpen = action.payload;
+    },
+
     replaceEmails(state, action) {
       state.inboxMail = action.payload;
     },
